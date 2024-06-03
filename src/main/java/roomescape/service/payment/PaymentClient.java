@@ -2,10 +2,12 @@ package roomescape.service.payment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import roomescape.exception.payment.PaymentConfirmErrorCode;
 import roomescape.exception.payment.PaymentConfirmException;
@@ -23,15 +25,29 @@ public class PaymentClient {
     }
 
     public PaymentConfirmOutput confirmPayment(PaymentConfirmInput paymentConfirmInput) {
-        return restClient.method(HttpMethod.POST)
-                .uri("/confirm")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(paymentConfirmInput)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new PaymentConfirmException(getPaymentConfirmErrorCode(response));
-                })
-                .body(PaymentConfirmOutput.class);
+        try {
+            System.out.println("스타트으으으으");
+            Thread.sleep(10000);
+            System.out.println("하이이이이");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            return restClient.method(HttpMethod.POST)
+                    .uri("/confirm")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(paymentConfirmInput)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, (request, response) -> {
+                        throw new PaymentConfirmException(getPaymentConfirmErrorCode(response));
+                    })
+                    .body(PaymentConfirmOutput.class);
+        } catch (ResourceAccessException e) {
+            if (e.getCause() instanceof SocketTimeoutException) {
+                throw new PaymentConfirmException(PaymentConfirmErrorCode.PAYMENT_CONFIRM_ERROR_MISMATCH);
+            }
+            throw e;
+        }
     }
 
     /**

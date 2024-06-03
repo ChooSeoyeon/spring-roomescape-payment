@@ -2,22 +2,32 @@ package roomescape.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import roomescape.service.payment.PaymentClient;
 
 @Configuration
-public class ClientConfig {
+public class PaymentClientConfig {
     private static final String BASE_URL = "https://api.tosspayments.com/v1/payments";
     private static final String BASIC_DELIMITER = ":";
     private static final String AUTH_HEADER_PREFIX = "Basic ";
 
     @Value("${payment.secret-key}")
     private String secretKey;
+
+    @Value("${payment.connect-timeout-length}")
+    private Duration connectTimeoutLength;
+
+    @Value("${payment.read-timeout-length}")
+    private Duration readTimeoutLength;
 
     @Bean
     public PaymentClient paymentClient(ObjectMapper objectMapper) {
@@ -26,9 +36,18 @@ public class ClientConfig {
 
     private RestClient createRestClient() {
         return RestClient.builder()
+                .requestFactory(createRequestFactory())
                 .baseUrl(BASE_URL)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, createAuthorization())
+
                 .build();
+    }
+
+    private ClientHttpRequestFactory createRequestFactory() {
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+                .withConnectTimeout(connectTimeoutLength)
+                .withReadTimeout(readTimeoutLength);
+        return ClientHttpRequestFactories.get(settings);
     }
 
     private String createAuthorization() {
