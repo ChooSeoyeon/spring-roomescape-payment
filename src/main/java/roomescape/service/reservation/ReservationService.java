@@ -99,12 +99,19 @@ public class ReservationService {
         return new ReservationMineListResponse(myReservations);
     }
 
-    public ReservationResponse saveReservationWithoutPayment(ReservationSaveInput reservationSaveInput, Member member) {
+    public ReservationResponse saveReservationWithoutPaymentConfirm(
+            ReservationSaveInput reservationSaveInput, Member member) {
         Reservation savedReservation = saveReservation(reservationSaveInput, member);
+        saveDefaultPayment(savedReservation);
         return new ReservationResponse(savedReservation);
     }
 
-    public ReservationResponse saveReservationWithPayment(
+    private void saveDefaultPayment(Reservation reservation) {
+        ReservationPayment reservationPayment = new ReservationPayment(reservation);
+        reservationPaymentRepository.save(reservationPayment);
+    }
+
+    public ReservationResponse saveReservationWithPaymentConfirm(
             ReservationSaveInput reservationSaveInput, PaymentConfirmInput paymentConfirmInput, Member member) {
         Reservation savedReservation = saveReservation(reservationSaveInput, member);
         confirmAndSavePayment(paymentConfirmInput, savedReservation);

@@ -34,6 +34,10 @@ public class ReservationPayment {
         this(null, info, reservation);
     }
 
+    public ReservationPayment(Reservation reservation) {
+        this(null, new PaymentInfo(), reservation);
+    }
+
     public Long getId() {
         return id;
     }

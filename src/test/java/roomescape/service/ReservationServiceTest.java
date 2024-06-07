@@ -151,7 +151,7 @@ class ReservationServiceTest extends ServiceTest {
         void 결제_없이_예약을_추가할_수_있다() {
             ReservationSaveInput request = new ReservationSaveInput(
                     LocalDate.of(2000, 4, 7), reservationTime.getId(), theme.getId());
-            ReservationResponse response = reservationService.saveReservationWithoutPayment(request, member);
+            ReservationResponse response = reservationService.saveReservationWithoutPaymentConfirm(request, member);
 
             assertThat(response.getMember().getName())
                     .isEqualTo(member.getName().getName());
@@ -163,7 +163,7 @@ class ReservationServiceTest extends ServiceTest {
             ReservationSaveInput input = new ReservationSaveInput(reservation.getDate(), reservationTime.getId(),
                     theme.getId());
 
-            assertThatThrownBy(() -> reservationService.saveReservationWithoutPayment(input, member))
+            assertThatThrownBy(() -> reservationService.saveReservationWithoutPaymentConfirm(input, member))
                     .isInstanceOf(DuplicatedReservationException.class);
         }
 
@@ -172,7 +172,7 @@ class ReservationServiceTest extends ServiceTest {
             ReservationSaveInput input = new ReservationSaveInput(
                     LocalDate.of(2000, 4, 6), reservationTime.getId(), theme.getId());
 
-            assertThatThrownBy(() -> reservationService.saveReservationWithoutPayment(input, member))
+            assertThatThrownBy(() -> reservationService.saveReservationWithoutPaymentConfirm(input, member))
                     .isInstanceOf(InvalidDateTimeReservationException.class);
         }
     }
@@ -205,7 +205,7 @@ class ReservationServiceTest extends ServiceTest {
             given(paymentClient.confirmPayment(any()))
                     .willReturn(paymentConfirmOutput);
 
-            reservationService.saveReservationWithPayment(reservationSaveInput, paymentConfirmInput, member);
+            reservationService.saveReservationWithPaymentConfirm(reservationSaveInput, paymentConfirmInput, member);
 
             List<ReservationPayment> reservationPayments = reservationPaymentFixture.findAllReservationPayment();
             assertThat(reservationPayments.get(0).getInfo().getPaymentKey())
@@ -217,7 +217,7 @@ class ReservationServiceTest extends ServiceTest {
             given(paymentClient.confirmPayment(any()))
                     .willThrow(new PaymentConfirmException(PaymentConfirmErrorCode.UNKNOWN_PAYMENT_ERROR));
 
-            assertThatThrownBy(() -> reservationService.saveReservationWithPayment(
+            assertThatThrownBy(() -> reservationService.saveReservationWithPaymentConfirm(
                     reservationSaveInput, paymentConfirmInput, member))
                     .isInstanceOf(PaymentConfirmException.class);
             assertThat(reservationPaymentFixture.findAllReservationPayment())
