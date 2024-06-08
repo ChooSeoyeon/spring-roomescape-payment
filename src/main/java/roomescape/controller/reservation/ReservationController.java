@@ -59,7 +59,7 @@ public class ReservationController {
         ReservationSaveInput reservationSaveInput = request.toReservationSaveInput();
         PaymentConfirmInput paymentConfirmInput = request.toPaymentConfirmInput();
 
-        ReservationResponse response = reservationService.saveReservationWithPayment(
+        ReservationResponse response = reservationService.saveReservationWithPaymentConfirm(
                 reservationSaveInput, paymentConfirmInput, member);
         return ResponseEntity.created(URI.create("/reservations/" + response.getId())).body(response);
     }
@@ -70,7 +70,8 @@ public class ReservationController {
         ReservationSaveInput reservationSaveInput = request.toReservationSaveInput();
         Member member = memberService.findById(request.getMemberId());
 
-        ReservationResponse response = reservationService.saveReservationWithoutPayment(reservationSaveInput, member);
+        ReservationResponse response = reservationService.saveReservationWithoutPaymentConfirm(
+                reservationSaveInput, member);
         return ResponseEntity.created(URI.create("/reservations/" + response.getId())).body(response);
     }
 

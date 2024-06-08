@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.member.Member;
+import roomescape.domain.payment.PaymentInfo;
 import roomescape.domain.payment.ReservationPayment;
 import roomescape.domain.payment.ReservationPaymentRepository;
 import roomescape.domain.reservation.Reservation;
@@ -99,12 +100,7 @@ public class ReservationService {
         return new ReservationMineListResponse(myReservations);
     }
 
-    public ReservationResponse saveReservationWithoutPayment(ReservationSaveInput reservationSaveInput, Member member) {
-        Reservation savedReservation = saveReservation(reservationSaveInput, member);
-        return new ReservationResponse(savedReservation);
-    }
-
-    public ReservationResponse saveReservationWithPayment(
+    public ReservationResponse saveReservationWithPaymentConfirm(
             ReservationSaveInput reservationSaveInput, PaymentConfirmInput paymentConfirmInput, Member member) {
         Reservation savedReservation = saveReservation(reservationSaveInput, member);
         confirmAndSavePayment(paymentConfirmInput, savedReservation);
@@ -123,6 +119,19 @@ public class ReservationService {
     private void confirmAndSavePayment(PaymentConfirmInput input, Reservation reservation) {
         PaymentConfirmOutput output = paymentClient.confirmPayment(input);
         ReservationPayment reservationPayment = output.toReservationPayment(reservation);
+        reservationPaymentRepository.save(reservationPayment);
+    }
+
+    public ReservationResponse saveReservationWithoutPaymentConfirm(
+            ReservationSaveInput reservationSaveInput, Member member) {
+        Reservation savedReservation = saveReservation(reservationSaveInput, member);
+        savePaymentWithoutConfirm(savedReservation);
+        return new ReservationResponse(savedReservation);
+    }
+
+    private void savePaymentWithoutConfirm(Reservation reservation) {
+        PaymentInfo info = PaymentInfo.createPaymentWithoutConfirm();
+        ReservationPayment reservationPayment = new ReservationPayment(info, reservation);
         reservationPaymentRepository.save(reservationPayment);
     }
 

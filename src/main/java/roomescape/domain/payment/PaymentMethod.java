@@ -11,7 +11,8 @@ public enum PaymentMethod {
     BANK_TRANSFER("계좌이체"),
     CULTURE_VOUCHER("문화상품권"),
     BOOK_VOUCHER("도서문화상품권"),
-    GAME_VOUCHER("게임문화상품권");
+    GAME_VOUCHER("게임문화상품권"),
+    STORE_DIRECT_PAYMENT("가게직접결제");
 
     private final String description;
 

@@ -41,6 +41,14 @@ public class PaymentInfo {
         this.status = status;
     }
 
+    public PaymentInfo(String currency, PaymentMethod method, Long totalAmount, PaymentStatus status) {
+        this(null, null, null, null, currency, method, totalAmount, status);
+    }
+
+    public static PaymentInfo createPaymentWithoutConfirm() {
+        return new PaymentInfo("KRW", PaymentMethod.STORE_DIRECT_PAYMENT, 1000L, PaymentStatus.DONE);
+    }
+
     public String getTotalAmountWithCurrency() {
         return totalAmount + currency;
     }
