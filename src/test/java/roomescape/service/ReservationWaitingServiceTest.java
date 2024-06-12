@@ -37,7 +37,7 @@ public class ReservationWaitingServiceTest extends ServiceTest {
             Theme theme = themeFixture.createFirstTheme();
             Member member = memberFixture.createUserMember();
             Reservation reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waitingFixture.createWaiting(reservation, member);
+            reservationWaitingFixture.createWaiting(reservation, member);
 
             ReservationWaitingListResponse response = reservationWaitingService.findAllReservationWaiting();
 
@@ -82,7 +82,7 @@ public class ReservationWaitingServiceTest extends ServiceTest {
 
         @Test
         void 같은_사용자가_같은_예약에_대해선_예약_대기를_두_번_이상_추가_시_예외가_발생한다() {
-            waitingFixture.createWaiting(reservation, user);
+            reservationWaitingFixture.createWaiting(reservation, user);
             ReservationWaitingRequest request = new ReservationWaitingRequest(date, timeId, themeId);
 
             assertThatThrownBy(() -> reservationWaitingService.saveReservationWaiting(request, user))
@@ -130,14 +130,14 @@ public class ReservationWaitingServiceTest extends ServiceTest {
             Theme theme = themeFixture.createFirstTheme();
             user = memberFixture.createUserMember();
             reservation = reservationFixture.createFutureReservation(reservationTime, theme, user);
-            waitingFixture.createWaiting(reservation, user);
+            reservationWaitingFixture.createWaiting(reservation, user);
         }
 
         @Test
         void 예약_id와_회원을_지정해_예약_대기를_삭제할_수_있다() {
             reservationWaitingService.deleteReservationWaiting(reservation.getId(), user);
 
-            List<ReservationWaiting> waitings = waitingFixture.findAllWaiting();
+            List<ReservationWaiting> waitings = reservationWaitingFixture.findAllWaiting();
             assertThat(waitings)
                     .isEmpty();
         }
@@ -168,14 +168,14 @@ public class ReservationWaitingServiceTest extends ServiceTest {
             Theme theme = themeFixture.createFirstTheme();
             Member member = memberFixture.createUserMember();
             Reservation reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waiting = waitingFixture.createWaiting(reservation, member);
+            waiting = reservationWaitingFixture.createWaiting(reservation, member);
         }
 
         @Test
         void 예약_대기_id로_예약_대기를_삭제할_수_있다() {
             reservationWaitingService.deleteAdminReservationWaiting(waiting.getId());
 
-            List<ReservationWaiting> waitings = waitingFixture.findAllWaiting();
+            List<ReservationWaiting> waitings = reservationWaitingFixture.findAllWaiting();
             assertThat(waitings)
                     .isEmpty();
         }

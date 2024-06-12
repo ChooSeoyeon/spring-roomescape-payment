@@ -113,7 +113,7 @@ class ReservationServiceTest extends ServiceTest {
             Theme theme = themeFixture.createFirstTheme();
             member = memberFixture.createUserMember();
             Reservation reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waitingFixture.createWaiting(reservation, member);
+            reservationWaitingFixture.createWaiting(reservation, member);
         }
 
         @Test
@@ -269,12 +269,12 @@ class ReservationServiceTest extends ServiceTest {
         @Test
         void 예약_대기가_존재하는_예약_삭제_시_예약은_삭제되지_않고_대기번호_1번의_대기자가_예약자로_승격되면서_예약_대기가_삭제된다() {
             Member otherMember = memberFixture.createAdminMember();
-            waitingFixture.createWaiting(reservation, otherMember);
+            reservationWaitingFixture.createWaiting(reservation, otherMember);
 
             reservationService.deleteReservation(reservation.getId(), member.getId());
 
             List<Reservation> reservations = reservationFixture.findAllReservation();
-            List<ReservationWaiting> waitings = waitingFixture.findAllWaiting();
+            List<ReservationWaiting> waitings = reservationWaitingFixture.findAllWaiting();
             assertThat(reservations)
                     .isNotEmpty()
                     .first()

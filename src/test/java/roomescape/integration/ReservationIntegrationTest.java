@@ -158,7 +158,7 @@ class ReservationIntegrationTest extends IntegrationTest {
                     reservationTime, firstTheme, user);
             Reservation secondReservation = reservationFixture.createFutureReservation(
                     reservationTime, secondTheme, admin);
-            waitingFixture.createWaiting(secondReservation, user);
+            reservationWaitingFixture.createWaiting(secondReservation, user);
             reservationPaymentFixture.createReservationPayment(firstReservation);
 
             RestAssured.given(spec).log().all()

@@ -44,7 +44,7 @@ public class ReservationWaitingIntegrationTest extends IntegrationTest {
             Theme theme = themeFixture.createFirstTheme();
             Member member = memberFixture.createUserMember();
             Reservation reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waitingFixture.createWaiting(reservation, member);
+            reservationWaitingFixture.createWaiting(reservation, member);
             memberFixture.createAdminMember();
 
             RestAssured.given(spec).log().all()
@@ -116,7 +116,7 @@ public class ReservationWaitingIntegrationTest extends IntegrationTest {
 
         @Test
         void 같은_사용자가_같은_예약에_대해선_예약_대기를_두_번_이상_추가할_수_없다() {
-            waitingFixture.createWaiting(reservation, user);
+            reservationWaitingFixture.createWaiting(reservation, user);
             params.put("date", reservation.getDate().toString());
 
             RestAssured.given(spec).log().all()
@@ -186,7 +186,7 @@ public class ReservationWaitingIntegrationTest extends IntegrationTest {
             Theme theme = themeFixture.createFirstTheme();
             Member member = memberFixture.createUserMember();
             reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waitingFixture.createWaiting(reservation, member);
+            reservationWaitingFixture.createWaiting(reservation, member);
         }
 
         @Test
@@ -238,7 +238,7 @@ public class ReservationWaitingIntegrationTest extends IntegrationTest {
             Theme theme = themeFixture.createFirstTheme();
             Member member = memberFixture.createUserMember();
             Reservation reservation = reservationFixture.createFutureReservation(reservationTime, theme, member);
-            waiting = waitingFixture.createWaiting(reservation, member);
+            waiting = reservationWaitingFixture.createWaiting(reservation, member);
             memberFixture.createAdminMember();
         }
 
