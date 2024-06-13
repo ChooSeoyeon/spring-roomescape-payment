@@ -2,6 +2,7 @@ package roomescape.controller.login;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody @Valid LoginRequest request, HttpServletResponse response) {
         String token = loginService.login(request);
         Cookie cookie = cookieExtractor.createCookie(token);
         response.addCookie(cookie);
@@ -51,7 +52,7 @@ public class LoginController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<SignupResponse> signup(@RequestBody @Valid SignupRequest request) {
         SignupResponse response = loginService.signup(request);
         return ResponseEntity.created(URI.create("/members/" + response.getId())).body(response);
     }

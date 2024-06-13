@@ -1,5 +1,6 @@
 package roomescape.service.login.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import roomescape.domain.member.Member;
 import roomescape.domain.member.MemberEmail;
 import roomescape.domain.member.MemberName;
@@ -8,8 +9,13 @@ import roomescape.domain.member.MemberRole;
 import roomescape.exception.common.InvalidRequestBodyException;
 
 public class SignupRequest {
+    @NotBlank(message = "이메일을 입력해주세요.")
     private final String email;
+
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     private final String password;
+
+    @NotBlank(message = "이름을 입력해주세요.")
     private final String name;
 
     public SignupRequest(String email, String password, String name) {

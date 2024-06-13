@@ -3,6 +3,7 @@ package roomescape.exception.common;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +20,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = HttpMessageConversionException.class)
     public ResponseEntity<ErrorResponse> handleJsonParsingException() {
         return new ResponseEntity<>(new ErrorResponse("요청 body에 유효하지 않은 필드가 존재합니다."), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidException(MethodArgumentNotValidException exception) {
+        String message = exception.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+        return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {

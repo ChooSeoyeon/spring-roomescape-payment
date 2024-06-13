@@ -1,32 +1,26 @@
 package roomescape.service.reservation.dto;
 
-import java.time.DateTimeException;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import roomescape.exception.common.InvalidRequestBodyException;
 
 public class AdminReservationRequest {
+    @NotNull(message = "날짜를 입력해주세요.")
     private final LocalDate date;
+
+    @NotNull(message = "시간 id를 입력해주세요.")
     private final Long timeId;
+
+    @NotNull(message = "테마 id를 입력해주세요.")
     private final Long themeId;
+
+    @NotNull(message = "회원 id를 입력해주세요.")
     private final Long memberId;
 
-    public AdminReservationRequest(String date, String timeId, String themeId, String memberId) {
-        validate(date, timeId, themeId, memberId);
-        this.date = LocalDate.parse(date);
-        this.timeId = Long.parseLong(timeId);
-        this.themeId = Long.parseLong(themeId);
-        this.memberId = Long.parseLong(memberId);
-    }
-
-    public void validate(String date, String timeId, String themeId, String memberId) {
-        if (date == null || timeId == null || themeId == null || memberId == null) {
-            throw new InvalidRequestBodyException();
-        }
-        try {
-            LocalDate.parse(date);
-        } catch (DateTimeException e) {
-            throw new InvalidRequestBodyException();
-        }
+    public AdminReservationRequest(LocalDate date, Long timeId, Long themeId, Long memberId) {
+        this.date = date;
+        this.timeId = timeId;
+        this.themeId = themeId;
+        this.memberId = memberId;
     }
 
     public ReservationSaveInput toReservationSaveInput() {
